@@ -5,65 +5,398 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>顧客管理アプリ</title>
   <style>
-    body { font-family: sans-serif; margin: 2em; background: #f7f7f7; }
-    h1 { color: #333; }
-    form { background: #fff; padding: 1em; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 2em; }
-    label { display: block; margin-top: 1em; }
-    input[type="text"] { width: 100%; padding: 0.8em; margin-top: 0.2em; border: 1px solid #ccc; border-radius: 4px; font-size: 1.1em; }
-    button { margin-top: 1em; padding: 0.8em 2em; border: none; background: #007bff; color: #fff; border-radius: 4px; cursor: pointer; font-size: 1.1em; }
-    button.delete { background: #dc3545; margin-left: 0; margin-top: 0.5em; width: 100%; }
-    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px #0001; }
-    th, td { padding: 0.9em 0.5em; border-bottom: 1px solid #eee; text-align: left; font-size: 1em; }
-    th { background: #f0f0f0; }
-    tr:last-child td { border-bottom: none; }
-    @media (max-width: 600px) {
-      body { margin: 0.5em; }
-      form, table { box-shadow: none; border-radius: 0; }
-      th, td { font-size: 0.95em; padding: 0.7em 0.3em; }
-      table, thead, tbody, th, td, tr { display: block; width: 100%; }
-      thead { display: none; }
-      tr { margin-bottom: 1em; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px #0001; padding: 0.5em; }
-      td { border: none; position: relative; padding-left: 50%; min-height: 2.2em; }
-      td:before {
-        position: absolute;
-        left: 0.7em;
-        top: 0.7em;
-        width: 45%;
-        white-space: nowrap;
-        font-weight: bold;
-        color: #888;
-        font-size: 0.95em;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      font-weight: 300;
+    }
+
+    h2 {
+      color: #34495e;
+      margin: 30px 0 20px 0;
+      font-size: 1.8rem;
+      font-weight: 400;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    input[type="text"] {
+      padding: 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3498db;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 50px;
+      min-width: 120px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .table-container {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th {
+      background: linear-gradient(135deg, #34495e, #2c3e50);
+      color: #fff;
+      padding: 18px 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    td {
+      padding: 18px 15px;
+      border-bottom: 1px solid #ecf0f1;
+      font-size: 1rem;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .delete-btn {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      min-height: 44px;
+      min-width: 80px;
+    }
+
+    .delete-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .delete-btn:active {
+      transform: translateY(0);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #7f8c8d;
+      font-size: 1.1rem;
+    }
+
+    /* モバイルファースト レスポンシブ対応 */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
       }
-      td:nth-of-type(1):before { content: "顧客名"; }
-      td:nth-of-type(2):before { content: "会社名"; }
-      td:nth-of-type(3):before { content: "電話番号"; }
-      td:nth-of-type(4):before { content: "操作"; }
-      button.delete { margin-top: 0.5em; }
+
+      .container {
+        padding: 20px;
+        border-radius: 15px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin: 20px 0 15px 0;
+      }
+
+      .form-container {
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      input[type="text"] {
+        padding: 12px;
+        font-size: 1rem;
+      }
+
+      .submit-btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+        width: 100%;
+        min-height: 44px;
+      }
+
+      th, td {
+        padding: 12px 10px;
+        font-size: 0.9rem;
+      }
+
+      .delete-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        min-height: 44px;
+        min-width: 70px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .form-container {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      /* モバイル専用カードレイアウト */
+      .mobile-cards {
+        display: block;
+      }
+
+      .desktop-table {
+        display: none;
+      }
+
+      .customer-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #3498db;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .customer-info {
+        margin-bottom: 15px;
+      }
+
+      .customer-info div {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+        font-size: 1rem;
+      }
+
+      .customer-info .label {
+        font-weight: 600;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+      }
+
+      .customer-info .value {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: 500;
+        word-break: break-all;
+      }
+
+      .card-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+      }
+
+      .delete-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        min-height: 50px;
+        min-width: 80px;
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+      }
+
+      .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+      }
+
+      .delete-btn:active {
+        transform: translateY(0);
+      }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-cards {
+        display: none;
+      }
+
+      .desktop-table {
+        display: table;
+      }
+    }
+
+    /* アニメーション */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .customer-card {
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* フォーカス時のアクセシビリティ */
+    button:focus,
+    input:focus {
+      outline: 2px solid #3498db;
+      outline-offset: 2px;
     }
   </style>
 </head>
 <body>
-  <h1>顧客管理アプリ</h1>
-  <form id="customer-form">
-    <label>顧客名<input type="text" id="name" required></label>
-    <label>会社名<input type="text" id="company" required></label>
-    <label>電話番号<input type="text" id="phone" required pattern="[0-9\-]+" title="数字とハイフンのみ"></label>
-    <button type="submit">登録</button>
-  </form>
+  <div class="container">
+    <h1>顧客管理アプリ</h1>
+    
+    <div class="form-container">
+      <form id="customer-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">顧客名</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="form-group">
+            <label for="company">会社名</label>
+            <input type="text" id="company" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">電話番号</label>
+            <input type="text" id="phone" required pattern="[0-9\-]+" title="数字とハイフンのみ">
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">顧客を登録</button>
+      </form>
+    </div>
 
-  <h2>顧客一覧</h2>
-  <table id="customer-table">
-    <thead>
-      <tr><th>顧客名</th><th>会社名</th><th>電話番号</th><th>操作</th></tr>
-    </thead>
-    <tbody>
-      <!-- 顧客データがここに表示されます -->
-    </tbody>
-  </table>
+    <h2>顧客一覧</h2>
+    
+    <!-- デスクトップ用テーブル -->
+    <div class="table-container desktop-table">
+      <table id="customer-table">
+        <thead>
+          <tr>
+            <th>顧客名</th>
+            <th>会社名</th>
+            <th>電話番号</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 顧客データがここに表示されます -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- モバイル用カード -->
+    <div class="mobile-cards" id="mobile-cards">
+      <!-- モバイル用カードがここに表示されます -->
+    </div>
+  </div>
 
   <script>
     const form = document.getElementById('customer-form');
     const tableBody = document.querySelector('#customer-table tbody');
+    const mobileCards = document.getElementById('mobile-cards');
     const STORAGE_KEY = 'customers';
 
     function loadCustomers() {
@@ -77,6 +410,8 @@
 
     function renderCustomers() {
       const customers = loadCustomers();
+      
+      // デスクトップ用テーブル
       tableBody.innerHTML = '';
       customers.forEach((customer, idx) => {
         const tr = document.createElement('tr');
@@ -84,10 +419,41 @@
           <td>${customer.name}</td>
           <td>${customer.company}</td>
           <td>${customer.phone}</td>
-          <td><button class="delete" data-idx="${idx}">削除</button></td>
+          <td><button class="delete-btn" data-idx="${idx}">削除</button></td>
         `;
         tableBody.appendChild(tr);
       });
+
+      // モバイル用カード
+      mobileCards.innerHTML = '';
+      if (customers.length === 0) {
+        mobileCards.innerHTML = '<div class="empty-state">登録された顧客がありません</div>';
+      } else {
+        customers.forEach((customer, idx) => {
+          const card = document.createElement('div');
+          card.className = 'customer-card';
+          card.innerHTML = `
+            <div class="customer-info">
+              <div>
+                <span class="label">顧客名:</span>
+                <span class="value">${customer.name}</span>
+              </div>
+              <div>
+                <span class="label">会社名:</span>
+                <span class="value">${customer.company}</span>
+              </div>
+              <div>
+                <span class="label">電話番号:</span>
+                <span class="value">${customer.phone}</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="delete-btn" data-idx="${idx}">削除</button>
+            </div>
+          `;
+          mobileCards.appendChild(card);
+        });
+      }
     }
 
     form.addEventListener('submit', function(e) {
@@ -95,23 +461,52 @@
       const name = document.getElementById('name').value.trim();
       const company = document.getElementById('company').value.trim();
       const phone = document.getElementById('phone').value.trim();
-      if (!name || !company || !phone) return;
+      
+      if (!name || !company || !phone) {
+        alert('すべての項目を入力してください');
+        return;
+      }
+      
       const customers = loadCustomers();
       customers.push({ name, company, phone });
       saveCustomers(customers);
       renderCustomers();
       form.reset();
+      
+      // 成功メッセージ
+      const submitBtn = form.querySelector('.submit-btn');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = '登録完了！';
+      submitBtn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+      
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+      }, 2000);
     });
 
+    // 削除ボタンのイベントリスナー（デスクトップ用）
     tableBody.addEventListener('click', function(e) {
-      if (e.target.classList.contains('delete')) {
-        const idx = e.target.getAttribute('data-idx');
+      if (e.target.classList.contains('delete-btn')) {
+        handleDelete(e.target.getAttribute('data-idx'));
+      }
+    });
+
+    // 削除ボタンのイベントリスナー（モバイル用）
+    mobileCards.addEventListener('click', function(e) {
+      if (e.target.classList.contains('delete-btn')) {
+        handleDelete(e.target.getAttribute('data-idx'));
+      }
+    });
+
+    function handleDelete(idx) {
+      if (confirm('この顧客を削除しますか？')) {
         const customers = loadCustomers();
         customers.splice(idx, 1);
         saveCustomers(customers);
         renderCustomers();
       }
-    });
+    }
 
     // 初期表示
     renderCustomers();
