@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>顧客管理アプリ</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; background: #f7f7f7; }
+    h1 { color: #333; }
+    form { background: #fff; padding: 1em; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 2em; }
+    label { display: block; margin-top: 1em; }
+    input[type="text"] { width: 100%; padding: 0.8em; margin-top: 0.2em; border: 1px solid #ccc; border-radius: 4px; font-size: 1.1em; }
+    button { margin-top: 1em; padding: 0.8em 2em; border: none; background: #007bff; color: #fff; border-radius: 4px; cursor: pointer; font-size: 1.1em; }
+    button.delete { background: #dc3545; margin-left: 0; margin-top: 0.5em; width: 100%; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px #0001; }
+    th, td { padding: 0.9em 0.5em; border-bottom: 1px solid #eee; text-align: left; font-size: 1em; }
+    th { background: #f0f0f0; }
+    tr:last-child td { border-bottom: none; }
+    @media (max-width: 600px) {
+      body { margin: 0.5em; }
+      form, table { box-shadow: none; border-radius: 0; }
+      th, td { font-size: 0.95em; padding: 0.7em 0.3em; }
+      table, thead, tbody, th, td, tr { display: block; width: 100%; }
+      thead { display: none; }
+      tr { margin-bottom: 1em; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px #0001; padding: 0.5em; }
+      td { border: none; position: relative; padding-left: 50%; min-height: 2.2em; }
+      td:before {
+        position: absolute;
+        left: 0.7em;
+        top: 0.7em;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #888;
+        font-size: 0.95em;
+      }
+      td:nth-of-type(1):before { content: "顧客名"; }
+      td:nth-of-type(2):before { content: "会社名"; }
+      td:nth-of-type(3):before { content: "電話番号"; }
+      td:nth-of-type(4):before { content: "操作"; }
+      button.delete { margin-top: 0.5em; }
+    }
+  </style>
+</head>
+<body>
+  <h1>顧客管理アプリ</h1>
+  <form id="customer-form">
+    <label>顧客名<input type="text" id="name" required></label>
+    <label>会社名<input type="text" id="company" required></label>
+    <label>電話番号<input type="text" id="phone" required pattern="[0-9\-]+" title="数字とハイフンのみ"></label>
+    <button type="submit">登録</button>
+  </form>
+
+  <h2>顧客一覧</h2>
+  <table id="customer-table">
+    <thead>
+      <tr><th>顧客名</th><th>会社名</th><th>電話番号</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+      <!-- 顧客データがここに表示されます -->
+    </tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('customer-form');
+    const tableBody = document.querySelector('#customer-table tbody');
+    const STORAGE_KEY = 'customers';
+
+    function loadCustomers() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    }
+
+    function saveCustomers(customers) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
+    }
+
+    function renderCustomers() {
+      const customers = loadCustomers();
+      tableBody.innerHTML = '';
+      customers.forEach((customer, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${customer.name}</td>
+          <td>${customer.company}</td>
+          <td>${customer.phone}</td>
+          <td><button class="delete" data-idx="${idx}">削除</button></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if (!name || !company || !phone) return;
+      const customers = loadCustomers();
+      customers.push({ name, company, phone });
+      saveCustomers(customers);
+      renderCustomers();
+      form.reset();
+    });
+
+    tableBody.addEventListener('click', function(e) {
+      if (e.target.classList.contains('delete')) {
+        const idx = e.target.getAttribute('data-idx');
+        const customers = loadCustomers();
+        customers.splice(idx, 1);
+        saveCustomers(customers);
+        renderCustomers();
+      }
+    });
+
+    // 初期表示
+    renderCustomers();
+  </script>
+</body>
+</html>

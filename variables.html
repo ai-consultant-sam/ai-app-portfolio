@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>変数の練習</title>
+</head>
+<body>
+    <h1>変数を使ってみよう</h1>
+    <button onclick="showProfile()">プロフィール表示</button>
+    <button onclick="calculate()">計算実行</button>
+    
+    <script>
+        // 変数の定義
+        var myName = "田中太郎";
+        var myAge = 30;
+        var hourlyRate = 5000;
+        
+        function showProfile() {
+            alert("名前: " + myName + "\n年齢: " + myAge + "歳");
+        }
+        
+        function calculate() {
+            var hours = 40;  // 作業時間
+            var totalPrice = hours * hourlyRate;  // 計算
+            alert("作業時間: " + hours + "時間\n料金: " + totalPrice + "円");
+        }
+    </script>
+</body>
+</html>
